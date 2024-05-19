@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+ flask_app:
+  container_name: falask_app
+  image: falask_app
+  build: .
+  ports: 
+   - "${HTTP_PORT}:4000"
+  environment:
+   - DB_URL=postgres
+   - DB_USER=postgres
+   - DB_PASSWORD=${POSTGRES_PASSWORD}
+   - DB_HOST=lab_one
+  depends_on:
+   - lab_one
+ lab_one:  
+  container_name: lab_one
+  image: postgres:12
+  ports: 
+   - "${POSTGRES_PORT}:5432"
+  environment:
+   - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+   - POSTGRES_USER=postgres
+   - POSTGRES_DB=lab_one
+  volumes:
+   - pgdata:/var/lib/postgresql/data
+ pg-admin:
+  image: dpage/pgadmin4
+  depends_on:
+   - lab_one
+  environment:
+   - PGADMIN_DEFAULT_EMAIL=${PGADMIN_LOGIN}
+   - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+   - PGADMIN_LISTEN_PORT=5050
+  ports:
+   - "${PGADMIN_PORT}:5050"
+volumes:
+ pgdata: {}
